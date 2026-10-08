@@ -1,0 +1,7 @@
+Flask>=3.1,<4
+gunicorn>=23,<24
+PyMuPDF>=1.25,<2
+openai>=2,<4
+pydantic>=2,<3
+Pillow>=11,<13
+openpyxl>=3.1.5,<4

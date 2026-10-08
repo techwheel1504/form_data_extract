@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FormData · Form extraction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+  <header><a class="brand" href="/">▤ <span>FormData<span class="brand-light"> / extract</span></span></a><span class="local">● OpenAI extraction</span></header>
+  <main>
+    <div class="eyebrow">DOCUMENTS IN. STRUCTURED DATA OUT.</div>
+    <h1>Your forms, ready for a spreadsheet.</h1>
+    <p class="intro">Turn student, teacher, employee and other forms into editable rows.<br class="desktop"> Columns follow each form's fields, and every file keeps its name.</p>
+    <div class="workflow"><span class="active">01 &nbsp; Upload forms</span><span>02 &nbsp; Review fields</span><span>03 &nbsp; Export data</span></div>
+    <section class="api-config" aria-label="OpenAI configuration">
+      {% if openai.configured %}
+      <strong>OpenAI key configured</strong><span>Model: {{ openai.model }} · API usage is billed to your OpenAI account.</span>
+      {% else %}
+      <strong>Set up your OpenAI API key</strong><span>Copy <code>.env.example</code> to <code>.env</code>, set <code>OPENAI_API_KEY</code>, then run <code>docker compose up -d</code>. Keep your key on the server.</span>
+      {% endif %}
+    </section>
+    <section class="upload-panel">
+      <div id="dropzone" class="dropzone">
+        <div class="upload-icon" aria-hidden="true">↥</div><h2>Drop your forms here</h2>
+        <p>PDF, PNG, JPG, TIFF, BMP or WebP · up to 1,000 files per batch · each file under 50 MB</p>
+        <label class="button primary" for="files">Browse files</label><input id="files" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.bmp,.webp">
+        <small>Use forms with the same layout together · scanned PDFs supported · maximum 20 pages per file</small>
+      </div>
+      <div class="queue-header"><span>Selected files</span><button id="remove-all" class="quiet" type="button" disabled>Remove all</button></div>
+      <div id="queue" class="queue"></div>
+      <div class="upload-footer"><span>Form pages are sent to OpenAI for extraction. This app does not save your documents.</span><button id="extract" class="primary" disabled>Extract fields →</button></div>
+    </section>
+    <div id="status" role="status" aria-live="polite"></div>
+    <section class="results-panel">
+      <div class="results-header"><div><div class="eyebrow">YOUR WORKSPACE</div><h2>Extracted data <span id="count" class="badge">0 forms</span></h2></div><div class="actions"><button id="add" disabled>+ Add column</button><button id="csv" disabled>↓ CSV</button><button id="xlsx" class="primary" disabled>↓ Excel</button></div></div>
+      <div id="empty"><div class="empty-icon">▦</div><h3>A place for every field.</h3><p>Upload forms to build your table. Review and edit any cell before exporting.</p></div>
+      <div id="table-wrap" class="table-wrap" hidden><table id="table"></table></div>
+      <div id="review" hidden><p class="hint">Click any value to edit. AI extraction can make mistakes; compare against the source form. Add missing columns as needed.</p><label for="source">Extraction notes for</label> <select id="source"></select><pre id="source-text"></pre><button id="clear" class="quiet">Clear workspace</button></div>
+    </section>
+    <footer><span>FORMDATA EXTRACT</span><span>One file per row. One field per column.</span></footer>
+  </main>
+  <dialog id="column-dialog"><form method="dialog"><h2>Add a field column</h2><label for="column-name">Field name</label><input id="column-name" maxlength="120" required autocomplete="off"><p id="column-error" role="alert"></p><div class="actions"><button value="cancel" formnovalidate>Cancel</button><button id="save-column" class="primary" value="save">Add column</button></div></form></dialog>
+</body>
+</html>
